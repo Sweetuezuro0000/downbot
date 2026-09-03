@@ -10,7 +10,7 @@ db = client["downbot_db"]
 users_col = db["users"]
 settings_col = db["settings"]
 
-# --- Settings Management ---
+# --- Settings & Force-Sub Configuration ---
 
 async def get_settings():
     settings = await settings_col.find_one({"_id": "config"})
@@ -21,6 +21,7 @@ async def get_settings():
             "maintenance_mode": False,
             "daily_free_limit": 5,
             "channel_link": os.environ.get("DEFAULT_CHANNEL_LINK", "https://t.me/YourChannel"),
+            "force_sub_channel": os.environ.get("FORCE_SUB_CHANNEL", ""),
             "ad_caption": "\n\n🚀 **Join Channel:** {channel_link}"
         }
         await settings_col.insert_one(default_settings)
