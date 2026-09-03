@@ -1,6 +1,10 @@
 pyrogram
 tgcrypto
+pymongo
 motor
 yt-dlp
 requests
 aiofiles
+pysocks
+dnspython
+flask
