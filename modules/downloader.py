@@ -10,12 +10,13 @@ URL_REGEX = r"(https?://[^\s]+)"
 
 def download_media_sync(url: str, output_path: str):
     ydl_opts = {
-        # Max 1080p resolution to avoid huge 4K file sizes
-        'format': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best',
+        # Universal format selector: YouTube, Pinterest, Insta, TikTok, Twitter sab par chalega
+        'format': 'bv*[height<=1080]+ba/b[height<=1080]/b',
         'outtmpl': output_path,
         'quiet': True,
         'no_warnings': True,
-        'max_filesize': 1900 * 1024 * 1024, # 1.9 GB Limit (Telegram Max Limit)
+        'max_filesize': 1900 * 1024 * 1024, # 1.9 GB Limit
+        'merge_output_format': 'mp4', # FFmpeg automatic MP4 container me convert kar dega
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
@@ -38,18 +39,16 @@ def register_downloader_handlers(app: Client):
             await send_force_sub_msg(client, message)
             return
 
-        # 3. Independent Limit System Check
+        # 3. Limit Check
         if settings.get("limit_system_active"):
             user_data = await get_user(user_id)
             is_premium = user_data.get("is_premium", False) if user_data else False
             
-            # Limit check ONLY applies to non-premium users when Limit System is ON
             if not is_premium:
                 downloads_today = await check_and_reset_limit(user_id)
                 base_limit = settings.get("daily_free_limit", 5)
                 referrals = user_data.get("total_referrals", 0) if user_data else 0
                 
-                # Bonus: Every referral gives +2 daily downloads
                 total_allowed = base_limit + (referrals * 2)
 
                 if downloads_today >= total_allowed:
@@ -68,7 +67,7 @@ def register_downloader_handlers(app: Client):
         file_id = f"{base_filename}.mp4"
 
         try:
-            # Sync execution in thread pool
+            # Universal sync download execution
             title = await asyncio.to_thread(download_media_sync, url, file_id)
 
             actual_file = file_id
@@ -79,7 +78,7 @@ def register_downloader_handlers(app: Client):
                         break
 
             if not os.path.exists(actual_file):
-                await status_msg.edit_text("❌ **Download Failed!** Video process nahi ho saki ya size 1.9GB se bada hai.")
+                await status_msg.edit_text("❌ **Download Failed!** Video format process nahi ho saka.")
                 return
 
             await status_msg.edit_text("📤 **Video Upload Ho Rahi Hai...**")
@@ -93,16 +92,17 @@ def register_downloader_handlers(app: Client):
                 supports_streaming=True
             )
             
-            # Increment download count
-            await increment_download_count(user_id)
+            if settings.get("limit_system_active"):
+                await increment_download_count(user_id)
+                
             await status_msg.delete()
 
         except Exception as e:
             print(f"Download Error: {e}")
-            await status_msg.edit_text("❌ **Error:** Download fail ho gaya. Link sahi hai ya nahi check karein.")
+            await status_msg.edit_text("❌ **Error:** Video download nahi ho saki. Link check karein.")
 
         finally:
-            # Auto Cleanup
+            # File Cleanup
             for f in os.listdir("downloads"):
                 if f.startswith(f"{user_id}_{message.id}"):
                     try:
