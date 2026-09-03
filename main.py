@@ -30,9 +30,9 @@ async def start_cmd(client: Client, message: Message):
 
     await message.reply_text(
         f"👋 **Hello {message.from_user.first_name}!**\n\n"
-        "Main ek **All-In-One Downloader Bot** hoon!\n\n"
-        "📹 Instagram Reels, YouTube Shorts, TikTok, Pinterest ke links bhej kar instant video download karein.\n\n"
-        "🎯 Refer karke dosto ko add karein: `/refer`"
+        "I'm a **All-In-One Downloader Bot**!\n\n"
+        " Send 📹 Instagram Reels, YouTube Shorts, TikTok, Pinterest links to download instant video/audio/post.\n\n"
+        "Developer @parawebdev"
     )
 
 # Register All Modules
