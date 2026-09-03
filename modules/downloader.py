@@ -88,7 +88,7 @@ def register_downloader_handlers(app: Client):
                 await message.reply_text("🛠️ **Bot is under maintenance!** Please try again later.")
                 return
 
-        # Force-Sub Check
+        # Force-Sub Check on URL receive
         if not await check_force_sub(client, user_id):
             await send_force_sub_msg(client, message)
             return
@@ -115,6 +115,12 @@ def register_downloader_handlers(app: Client):
     async def process_download(client: Client, query: CallbackQuery):
         user_id = query.from_user.id
         settings = await get_settings()
+
+        # Re-verify Force-Sub on Button Click (Security Check)
+        if not await check_force_sub(client, user_id):
+            await query.answer("⚠️ You must join our channel first!", show_alert=True)
+            await send_force_sub_msg(client, query.message)
+            return
 
         # Check Limits
         limit_active = settings.get("limit_system_active", True)
