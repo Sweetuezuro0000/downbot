@@ -85,7 +85,7 @@ def register_downloader_handlers(app: Client):
         if settings.get("maintenance_mode"):
             admin_ids = [int(x) for x in os.environ.get("ADMIN_IDS", "").split(",") if x.strip()]
             if user_id not in admin_ids:
-                await message.reply_text("🛠️ **Bot is under maintenance!** Please try again later.")
+                await message.reply_text("🛠️ **Bot is under maintenance!** check updates at @parawebdevs.")
                 return
 
         # Force-Sub Check on URL receive
