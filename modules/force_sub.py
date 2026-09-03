@@ -27,6 +27,6 @@ async def send_force_sub_msg(client: Client, message: Message):
     ])
     await message.reply_text(
         "⚠️ **Access Restricted!**\n\n"
-        "Bot ko use karne ke liye pehle hamara main channel join karein.",
+        "Join our channel to use this bot.",
         reply_markup=keyboard
     )
