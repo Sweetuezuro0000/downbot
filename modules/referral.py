@@ -19,10 +19,10 @@ def register_referral_handlers(app: Client):
 
         text = (
             "🎯 **REFER & EARN PROGRAM**\n\n"
-            f"🔗 **Aapka Referral Link:**\n`{ref_link}`\n\n"
+            f"🔗 **Your Referral Link:**\n`{ref_link}`\n\n"
             f"📊 **Total Referrals:** `{total_refs}` Users\n"
             f"🎁 **Bonus Earned:** `+{bonus_downloads}` Extra Daily Downloads\n"
-            f"⚡ **Aapka Total Daily Limit:** `{total_limit}` Downloads/Day\n\n"
-            "💡 *Har 1 Dost ko invite karne par +2 Extra Downloads Daily milenge!*"
+            f"⚡ **Your Total Daily Limit:** `{total_limit}` Downloads/Day\n\n"
+            "💡 *For every 1 friend you invite, you will get +2 Extra Downloads Daily.!*"
         )
         await message.reply_text(text)
